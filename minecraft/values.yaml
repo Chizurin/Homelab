@@ -1,0 +1,119 @@
+# ─── Server Image ─────────────────────────────────────────────────────────────
+image:
+  repository: itzg/minecraft-server
+  tag: latest                          # or "java21", "java17" to pin a specific JDK
+  pullPolicy: IfNotPresent
+
+# ─── Server Core ──────────────────────────────────────────────────────────────
+minecraftServer:
+  eula: "TRUE"                         # required: accepts Mojang's EULA
+
+  # Minecraft version. Use "LATEST" or pin e.g. "1.20.1"
+  version: "1.20.1"
+
+  # Server type. Common options:
+  #   AUTO_CURSEFORGE  — CurseForge modpack (needs CF_API_KEY)
+  #   MODRINTH         — Modrinth modpack
+  #   FORGE            — Forge mod loader
+  #   FABRIC           — Fabric mod loader
+  #   NEOFORGE         — NeoForge mod loader
+  #   VANILLA          — unmodded Minecraft
+  #   PAPER / PURPUR   — performance-optimized vanilla-compatible servers
+  type: "AUTO_CURSEFORGE"
+
+  # ─── CurseForge Modpack ───────────────────────────────────────────────────
+  # Provide the CurseForge modpack page URL:
+  cfPageUrl: "https://www.curseforge.com/minecraft/modpacks/into-the-backrooms-found-footage-horror"
+  # OR use slug + optional file ID to pin a specific version:
+  # cfSlug: "<modpack-slug>"
+  # cfFileId: "<numeric-file-id>"     # omit to use latest release
+
+  # CurseForge API key — pulled from SealedSecret; do NOT put the value here
+  extraEnv:
+    CF_API_KEY:
+      valueFrom:
+        secretKeyRef:
+          name: minecraft-secret
+          key: CF_API_KEY
+
+  # ─── Modrinth Modpack (when type: MODRINTH) ──────────────────────────────
+  # modrinthProjectId: "<project-id-or-slug>"
+  # modrinthVersionId: "<version-id>"  # omit for latest
+
+  # ─── Forge / Fabric / NeoForge ───────────────────────────────────────────
+  # forgeVersion: "47.3.0"             # optional: pin Forge version
+  # fabricVersion: "0.15.11"           # optional: pin Fabric Loader version
+
+  # ─── Memory & JVM ─────────────────────────────────────────────────────────
+  memory: "8192M"                      # heap size (~75% of available RAM is a safe target)
+
+  # Aikar's optimized GC flags — recommended for modded servers:
+  jvmXXOpts: "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1"
+
+  # ─── Server Properties ────────────────────────────────────────────────────
+  motd: "My Homelab Minecraft Server"  # message shown in server list
+  difficulty: normal                   # peaceful | easy | normal | hard
+  gameMode: survival                   # survival | creative | adventure | spectator
+  maxPlayers: 10
+  viewDistance: 10                     # render distance in chunks (lower = better perf)
+  simulationDistance: 8                # entity tick distance (lower = better perf)
+
+  pvp: true
+  spawnMonsters: true
+  spawnAnimals: true
+  spawnNpcs: true                      # villagers
+
+  allowNether: true
+  enableCommandBlock: false
+  announcePlayerAchievements: true
+
+  levelSeed: ""                        # "" = random; e.g. "12345" to pin a seed
+  levelType: DEFAULT                   # DEFAULT | FLAT | LARGEBIOMES | AMPLIFIED
+
+  # ─── Access Control ───────────────────────────────────────────────────────
+  ops: "Chizuria"                              # comma-separated Minecraft usernames (server admins)
+  whitelist: ""                        # comma-separated usernames; empty = open to anyone on tailnet
+
+  # ─── RCON (Remote Console) ────────────────────────────────────────────────
+  rcon:
+    enabled: true
+    serviceType: ClusterIP             # internal only; access via kubectl exec
+    port: 25575
+    existingSecret: minecraft-secret   # pulls rcon-password key from the SealedSecret
+    secretKey: rcon-password
+
+# ─── Networking ───────────────────────────────────────────────────────────────
+# NodePort exposes port 25565 on the node's IP (including the Tailscale IP).
+# Friends connect to: <node-tailscale-hostname>:25565
+# Find your Tailscale hostname: tailscale status --self
+serviceType: NodePort
+nodePort: 25565
+
+# ─── Persistent Storage ───────────────────────────────────────────────────────
+persistence:
+  dataDir:
+    enabled: true
+    Size: 20Gi                         # world + mods + configs; increase for large modpacks
+    # storageClass: local-path         # k3s default; omit to use cluster default
+
+# ─── Resource Requests & Limits ───────────────────────────────────────────────
+resources:
+  requests:
+    memory: 2Gi
+    cpu: "1"
+  limits:
+    memory: 10Gi                       # must be > memory setting + OS headroom
+    cpu: "4"
+
+# ─── Startup / Probe Timings ──────────────────────────────────────────────────
+# Large modpacks can take 5-15 min to download and start.
+# Increase initialDelaySeconds if the pod keeps restarting before the server is ready.
+livenessProbe:
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  failureThreshold: 10
+
+readinessProbe:
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  failureThreshold: 10
