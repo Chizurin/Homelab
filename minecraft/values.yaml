@@ -19,16 +19,12 @@ minecraftServer:
   #   NEOFORGE         — NeoForge mod loader
   #   VANILLA          — unmodded Minecraft
   #   PAPER / PURPUR   — performance-optimized vanilla-compatible servers
-  type: "CURSEFORGE"
-  CF_SERVER_MOD: "/var/home/chizu/Minecraft/Modpacks/Backrooms-1.9.9.4.zip"
-  # CurseForge modpack config and API key are passed as env vars
-  extraEnv:
-    # CurseForge API key — pulled from SealedSecret; do NOT put the value here
-    CF_API_KEY:
-      valueFrom:
-        secretKeyRef:
-          name: minecraft-secret
-          key: CF_API_KEY
+  type: "AUTO_CURSEFORGE"
+  autoCurseForge:
+    apiKey:
+      existingSecret: minecraft-secret    # pulls CF_API_KEY from the SealedSecret
+      secretKey: CF_API_KEY
+    pageUrl: "https://www.curseforge.com/minecraft/modpacks/into-the-backrooms-found-footage-horror"
   # ─── Modrinth Modpack (when type: MODRINTH) ──────────────────────────────
   # Add to extraEnv:
   #   MODRINTH_PROJECT: "<project-id-or-slug>"
