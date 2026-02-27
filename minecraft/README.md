@@ -22,13 +22,13 @@ World data persists across restarts on a PersistentVolumeClaim (PVC).
 
 ### 1. Create the namespace
 
-The ArgoCD application creates the namespace automatically on first sync, but you need it to exist first in order to create the sealed secret:
+The ArgoCD application creates the namespace automatically on first sync, but you need it to exist first in order to seal the secret against it:
 
 ```bash
 kubectl create namespace minecraft
 ```
 
-### 2. Seal your CurseForge API key
+### 2. Seal your secrets
 
 ```bash
 CF_API_KEY=your_cf_api_key
@@ -39,10 +39,8 @@ kubectl create secret generic minecraft-secret \
   --from-literal=CF_API_KEY="$CF_API_KEY" \
   --from-literal=rcon-password="$RCON_PASSWORD" \
   --dry-run=client -o yaml | \
-  kubeseal --format yaml > secrets/minecraft-secret.yaml
+  kubeseal --format yaml > secrets/minecraft/minecraft-secret.yaml
 ```
-
-Commit `secrets/minecraft-secret.yaml` to the repository.
 
 ### 3. Set your modpack in values.yaml
 
@@ -55,7 +53,7 @@ cfPageUrl: "https://www.curseforge.com/minecraft/modpacks/all-the-mods-9"
 ### 4. Commit and push
 
 ```bash
-git add apps/minecraft.yaml minecraft/values.yaml secrets/minecraft-secret.yaml
+git add apps/minecraft.yaml minecraft/values.yaml secrets/minecraft/minecraft-secret.yaml
 git commit -m "Add Minecraft server"
 git push
 ```
