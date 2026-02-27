@@ -31,13 +31,13 @@ kubectl create namespace minecraft
 ### 2. Seal your secrets
 
 ```bash
-CF_API_KEY=your_cf_api_key
-RCON_PASSWORD=your_rcon_password
+CF_API_KEY='$2a$10$your_full_key_here'
+RCON_PASSWORD='your_rcon_password'
 
 kubectl create secret generic minecraft-secret \
   --namespace minecraft \
-  --from-literal=CF_API_KEY="$CF_API_KEY" \
-  --from-literal=rcon-password="$RCON_PASSWORD" \
+  --from-literal=CF_API_KEY="${CF_API_KEY}" \
+  --from-literal=rcon-password="${RCON_PASSWORD}" \
   --dry-run=client -o yaml | \
   kubeseal --format yaml > secrets/minecraft/minecraft-secret.yaml
 ```
@@ -86,7 +86,7 @@ Once they're on your tailnet, they connect to the same address: `<tailscale-host
 
 ## Changing Modpacks
 
-1. Edit `cfPageUrl` (and optionally `type`, `version`) in [`values.yaml`](values.yaml)
+1. Edit `pageUrl` in [`values.yaml`](values.yaml)
 2. Commit and push — ArgoCD restarts the server with the new modpack
 3. The old world data stays on the PVC; the new modpack generates a fresh world
 
@@ -156,6 +156,7 @@ Common causes:
 - **OOM (out of memory)**: increase `resources.limits.memory` (must be higher than `minecraftServer.memory`)
 - **Bad API key**: check the `minecraft-secret` secret exists and has the correct key
 - **EULA not accepted**: ensure `eula: "TRUE"` is set in values.yaml
+- **pageUrl**: if you are having issues with the auto download for curseforge, make sure that you have pageUrl properly (spent like 2 hours on this)
 
 ### Modpack won't download
 

@@ -62,7 +62,7 @@ minecraftServer:
 
   # ─── Access Control ───────────────────────────────────────────────────────
   ops: "Chizuria"                              # comma-separated Minecraft usernames (server admins)
-  whitelist: ""                        # comma-separated usernames; empty = open to anyone on tailnet
+  whitelist: "Chizuria"                        # comma-separated usernames; empty = open to anyone on tailnet
 
   # ─── RCON (Remote Console) ────────────────────────────────────────────────
   rcon:
