@@ -21,8 +21,8 @@ minecraftServer:
   #   PAPER / PURPUR   — performance-optimized vanilla-compatible servers
   type: "AUTO_CURSEFORGE"
 
-  cfServerMod: "https://www.curseforge.com/minecraft/modpacks/into-the-backrooms-found-footage-horror"
-  
+  cfServerMod: "into-the-backrooms-found-footage-horror"
+
   # CurseForge modpack config and API key are passed as env vars
   extraEnv:
     # CurseForge API key — pulled from SealedSecret; do NOT put the value here
