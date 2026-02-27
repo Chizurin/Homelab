@@ -21,24 +21,24 @@ minecraftServer:
   #   PAPER / PURPUR   — performance-optimized vanilla-compatible servers
   type: "AUTO_CURSEFORGE"
 
-  # ─── CurseForge Modpack ───────────────────────────────────────────────────
-  # Provide the CurseForge modpack page URL:
-  cfPageUrl: "https://www.curseforge.com/minecraft/modpacks/into-the-backrooms-found-footage-horror"
-  # OR use slug + optional file ID to pin a specific version:
-  # cfSlug: "<modpack-slug>"
-  # cfFileId: "<numeric-file-id>"     # omit to use latest release
-
-  # CurseForge API key — pulled from SealedSecret; do NOT put the value here
+  # CurseForge modpack config and API key are passed as env vars
   extraEnv:
+    # CurseForge API key — pulled from SealedSecret; do NOT put the value here
     CF_API_KEY:
       valueFrom:
         secretKeyRef:
           name: minecraft-secret
           key: CF_API_KEY
+    # Modpack page URL — change this to swap modpacks
+    # To pin a specific version, use CF_SLUG + CF_FILE_ID instead:
+    #   CF_SLUG: "<modpack-slug>"
+    #   CF_FILE_ID: "<numeric-file-id>"
+    CF_PAGE_URL: "https://www.curseforge.com/minecraft/modpacks/into-the-backrooms-found-footage-horror"
 
   # ─── Modrinth Modpack (when type: MODRINTH) ──────────────────────────────
-  # modrinthProjectId: "<project-id-or-slug>"
-  # modrinthVersionId: "<version-id>"  # omit for latest
+  # Add to extraEnv:
+  #   MODRINTH_PROJECT: "<project-id-or-slug>"
+  #   MODRINTH_VERSION: "<version-id>"          # omit for latest
 
   # ─── Forge / Fabric / NeoForge ───────────────────────────────────────────
   # forgeVersion: "47.3.0"             # optional: pin Forge version
