@@ -1,3 +1,5 @@
+replicaCount: 0                      # set to 0 to turn the server off or 1 to turn it on;
+
 # ─── Server Image ─────────────────────────────────────────────────────────────
 image:
   repository: itzg/minecraft-server

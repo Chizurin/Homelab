@@ -44,10 +44,10 @@ kubectl create secret generic minecraft-secret \
 
 ### 3. Set your modpack in values.yaml
 
-Edit [`values.yaml`](values.yaml) and update `cfPageUrl` to your modpack's CurseForge page URL:
+Edit [`values.yaml`](values.yaml) and update `pageUrl` to your modpack's CurseForge page URL:
 
 ```yaml
-cfPageUrl: "https://www.curseforge.com/minecraft/modpacks/all-the-mods-9"
+pageUrl: "https://www.curseforge.com/minecraft/modpacks/all-the-mods-9"
 ```
 
 ### 4. Commit and push
@@ -76,13 +76,21 @@ Find your node's Tailscale hostname:
 tailscale status --self
 ```
 
-Connect from the Minecraft launcher: `<tailscale-hostname>:25565`
+Find the external port (set via `nodePort` in `values.yaml`):
+
+```bash
+kubectl get svc -n minecraft
+```
+
+Look for the NodePort value in the `PORT(S)` column (e.g. `25565:30565/TCP` — use the second number).
+
+Connect from the Minecraft launcher: `<tailscale-hostname>:<nodePort>`
 
 ### Inviting Friends
 
 Friends need Tailscale installed. Share access via the [Tailscale admin console](https://login.tailscale.com/admin/machines) → find your node → Share.
 
-Once they're on your tailnet, they connect to the same address: `<tailscale-hostname>:25565`
+Once they're on your tailnet, they connect to the same address: `<tailscale-hostname>:<nodePort>`
 
 ## Changing Modpacks
 
@@ -96,6 +104,28 @@ To keep a world, back it up first:
 kubectl exec -n minecraft $(kubectl get pod -n minecraft -o name | head -1) \
   -- tar czf /tmp/world-backup.tar.gz /data/world
 kubectl cp minecraft/$(kubectl get pod -n minecraft -o name | head -1 | cut -d/ -f2):/tmp/world-backup.tar.gz ./world-backup.tar.gz
+```
+
+4. If you want to remove all the previous old data, you can reset the PVC (PersistentVolumeClaim)
+
+> **Note:** ArgoCD deliberately never auto-deletes PVCs (even with pruning enabled) to prevent accidental data loss — this step is always manual.
+
+First set `replicaCount` to `0` in [`values.yaml`](values.yaml) and push so ArgoCD scales the pod down before you delete the volume. Then:
+
+```bash
+# Check reclaim policy — look at the RECLAIM POLICY column
+# "Delete" = PV is removed automatically with the PVC
+# "Retain" = you must also delete the PV manually
+kubectl get pv | grep minecraft
+
+# Delete the PVC
+kubectl delete pvc -n minecraft $(kubectl get pvc -n minecraft -o name | head -1)
+
+# Only if reclaim policy is Retain:
+kubectl delete pv <pv-name>
+
+# Sync ArgoCD to provision a fresh PVC and start the server (or wait for auto-sync)
+argocd app sync minecraft
 ```
 
 ## Common Commands
@@ -117,7 +147,7 @@ All settings live in [`values.yaml`](values.yaml). Key sections:
 |---------|-------------|
 | `minecraftServer.type` | Server type: `AUTO_CURSEFORGE`, `MODRINTH`, `FORGE`, `FABRIC`, `NEOFORGE`, `VANILLA` |
 | `minecraftServer.version` | Minecraft version (`LATEST` or e.g. `1.20.1`) |
-| `minecraftServer.cfPageUrl` | CurseForge modpack page URL |
+| `minecraftServer.pageUrl` | CurseForge modpack page URL |
 | `minecraftServer.memory` | Java heap size (e.g. `4096M`) |
 | `minecraftServer.difficulty` | `peaceful`, `easy`, `normal`, `hard` |
 | `minecraftServer.gameMode` | `survival`, `creative`, `adventure`, `spectator` |
@@ -126,7 +156,7 @@ All settings live in [`values.yaml`](values.yaml). Key sections:
 | `minecraftServer.ops` | Comma-separated operator usernames |
 | `minecraftServer.whitelist` | Comma-separated whitelist usernames |
 | `minecraftServer.levelSeed` | World seed (`""` = random) |
-| `nodePort` | Port friends connect to (default `25565`) |
+| `nodePort` | External port friends connect to (must be in k8s NodePort range `30000–32767`) |
 | `persistence.dataDir.Size` | PVC size for world data and mods |
 | `resources.limits.memory` | Kubernetes memory limit (keep above `memory` setting) |
 
@@ -156,7 +186,7 @@ Common causes:
 - **OOM (out of memory)**: increase `resources.limits.memory` (must be higher than `minecraftServer.memory`)
 - **Bad API key**: check the `minecraft-secret` secret exists and has the correct key
 - **EULA not accepted**: ensure `eula: "TRUE"` is set in values.yaml
-- **pageUrl**: if you are having issues with the auto download for curseforge, make sure that you have pageUrl properly (spent like 2 hours on this)
+- **pageUrl**: if you are having issues with the auto download for curseforge, make sure that you have the URL/File properly set (refer to minecraft/values.yaml) (spent 2 hours on this)
 
 ### Modpack won't download
 
@@ -167,7 +197,7 @@ kubectl get secret minecraft-secret -n minecraft
 kubectl describe secret minecraft-secret -n minecraft
 ```
 
-Verify the `cfPageUrl` is a valid, publicly accessible CurseForge modpack page (not a private or deleted pack).
+Verify the `pageUrl` is a valid, publicly accessible CurseForge modpack page (not a private or deleted pack).
 
 ### Friends can't connect
 
@@ -216,15 +246,12 @@ readinessProbe:
 
 ### Tailscale operator / networking issues
 
-Since Tailscale runs on the host (not inside k3s), the server is accessible on the node's Tailscale IP via the NodePort. If `<tailscale-hostname>:25565` is unreachable:
+Since Tailscale runs on the host (not inside k3s), the server is accessible on the node's Tailscale IP via the NodePort. If `<tailscale-hostname>:<nodePort>` is unreachable:
 
 ```bash
 # Confirm the NodePort service is up
 kubectl get svc -n minecraft
-
-# Check which port is assigned
-kubectl get svc -n minecraft -o jsonpath='{.items[0].spec.ports[0].nodePort}'
-
+#If the minecraft service isn't connected to NodePort, then double check the networking to allow the minecraft service be accessible using the host IP.
 # Confirm Tailscale is connected
 tailscale status
 ```
