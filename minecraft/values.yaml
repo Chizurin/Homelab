@@ -64,6 +64,12 @@ minecraftServer:
   ops: "Chizuria"                              # comma-separated Minecraft usernames (server admins)
   whitelist: "Chizuria"                        # comma-separated usernames; empty = open to anyone on tailnet
 
+  # ─── Networking ──────────────────────────────────────────────────────────
+  # NodePort exposes the server on the node's IP (including the Tailscale IP).
+  # K8s NodePort range is 30000-32767; see README for how to use port 25565.
+  serviceType: NodePort
+  nodePort: 30565
+
   # ─── RCON (Remote Console) ────────────────────────────────────────────────
   rcon:
     enabled: true
@@ -71,13 +77,6 @@ minecraftServer:
     port: 25575
     existingSecret: minecraft-secret   # pulls rcon-password key from the SealedSecret
     secretKey: rcon-password
-
-# ─── Networking ───────────────────────────────────────────────────────────────
-# NodePort exposes port 25565 on the node's IP (including the Tailscale IP).
-# Friends connect to: <node-tailscale-hostname>:25565
-# Find your Tailscale hostname: tailscale status --self
-serviceType: NodePort
-nodePort: 25565
 
 # ─── Persistent Storage ───────────────────────────────────────────────────────
 persistence:
