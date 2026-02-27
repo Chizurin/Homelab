@@ -21,7 +21,7 @@ minecraftServer:
   #   PAPER / PURPUR   — performance-optimized vanilla-compatible servers
   type: "AUTO_CURSEFORGE"
 
-  cfServerMod: "into-the-backrooms-found-footage-horror"
+  CF_SLUG: "into-the-backrooms-found-footage-horror"
 
   # CurseForge modpack config and API key are passed as env vars
   extraEnv:
