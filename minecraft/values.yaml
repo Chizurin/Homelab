@@ -21,6 +21,8 @@ minecraftServer:
   #   PAPER / PURPUR   — performance-optimized vanilla-compatible servers
   type: "AUTO_CURSEFORGE"
 
+  cfServerMod: "https://www.curseforge.com/minecraft/modpacks/into-the-backrooms-found-footage-horror"
+  
   # CurseForge modpack config and API key are passed as env vars
   extraEnv:
     # CurseForge API key — pulled from SealedSecret; do NOT put the value here
@@ -29,11 +31,6 @@ minecraftServer:
         secretKeyRef:
           name: minecraft-secret
           key: CF_API_KEY
-    # Modpack page URL — change this to swap modpacks
-    # To pin a specific version, use CF_SLUG + CF_FILE_ID instead:
-    #   CF_SLUG: "<modpack-slug>"
-    #   CF_FILE_ID: "<numeric-file-id>"
-    CF_PAGE_URL: "https://www.curseforge.com/minecraft/modpacks/into-the-backrooms-found-footage-horror"
 
   # ─── Modrinth Modpack (when type: MODRINTH) ──────────────────────────────
   # Add to extraEnv:
