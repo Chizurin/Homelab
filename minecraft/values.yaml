@@ -71,7 +71,16 @@ minecraftServer:
   # K8s NodePort range is 30000-32767; see README for how to use port 25565.
   serviceType: NodePort
   nodePort: 30565
-
+  extraPorts:
+    - name: voicechat-udp
+      containerPort: 25565
+      protocol: UDP
+      service:
+        enabled: true
+        type: NodePort
+        port: 25565
+        nodePort: 30566
+        protocol: UDP
   # ─── RCON (Remote Console) ────────────────────────────────────────────────
   rcon:
     enabled: true
