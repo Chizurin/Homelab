@@ -27,3 +27,10 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+  ignoreDifferences:
+    - group: ""
+      kind: PersistentVolumeClaim
+      name: minecraft-minecraft-datadir
+      namespace: minecraft
+      jsonPointers:
+        - /spec/resources/requests/storage
