@@ -93,8 +93,8 @@ minecraftServer:
 persistence:
   dataDir:
     enabled: true
-    size: 40Gi                         # world + mods + configs; increase for large modpacks
-    storageClass: longhorn
+    # size: 40Gi                         # world + mods + configs; increase for large modpacks
+    storageClass: local-path
     # storageClass: local-path         # k3s default; omit to use cluster default
 
 # ─── Resource Requests & Limits ───────────────────────────────────────────────
