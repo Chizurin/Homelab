@@ -1,4 +1,4 @@
-replicaCount: 1                      # set to 0 to turn the server off or 1 to turn it on;
+replicaCount: 0                      # set to 0 to turn the server off or 1 to turn it on;
 
 # ─── Server Image ─────────────────────────────────────────────────────────────
 image:
@@ -94,7 +94,7 @@ persistence:
   dataDir:
     enabled: true
     size: 40Gi                         # world + mods + configs; increase for large modpacks
-    storageClass: local-path           # k3s default; omit to use cluster default
+    storageClass: longhorn           # k3s default; omit to use cluster default
 
 # ─── Resource Requests & Limits ───────────────────────────────────────────────
 resources:

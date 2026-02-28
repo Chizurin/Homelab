@@ -5,19 +5,23 @@ metadata:
   namespace: argocd
 spec:
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
   project: default
   sources:
     - chart: longhorn
       repoURL: https://charts.longhorn.io/
-      targetRevision: v1.7.2 # Replace with the Longhorn version you'd like to install or upgrade to
+      targetRevision: v1.7.2
       helm:
         values: |
           preUpgradeChecker:
             jobEnabled: false
           defaultSettings:
-            defaultReplicaCount: 0
+            defaultReplicaCount: 1
+            defaultDataLocality: best-effort
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
