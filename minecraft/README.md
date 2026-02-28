@@ -119,7 +119,7 @@ First set `replicaCount` to `0` in [`values.yaml`](values.yaml) and push so Argo
 kubectl get pv | grep minecraft
 
 # Delete the PVC
-kubectl delete pvc -n minecraft $(kubectl get pvc -n minecraft -o name | head -1)
+kubectl delete -n minecraft $(kubectl get pvc -n minecraft -o name | head -1)
 
 # Only if reclaim policy is Retain:
 kubectl delete pv <pv-name>

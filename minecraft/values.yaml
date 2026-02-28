@@ -1,4 +1,4 @@
-replicaCount: 0                      # set to 0 to turn the server off or 1 to turn it on;
+replicaCount: 1                      # set to 0 to turn the server off or 1 to turn it on;
 
 # ─── Server Image ─────────────────────────────────────────────────────────────
 image:
@@ -11,7 +11,7 @@ minecraftServer:
   eula: "TRUE"                         # required: accepts Mojang's EULA
 
   # Minecraft version. Use "LATEST" or pin e.g. "1.20.1"
-  version: "1.20.1"
+  version: "1.21.1"
 
   # Server type. Common options:
   #   AUTO_CURSEFORGE  — CurseForge modpack (needs CF_API_KEY)
@@ -26,7 +26,7 @@ minecraftServer:
     apiKey:
       existingSecret: minecraft-secret    # pulls CF_API_KEY from the SealedSecret
       secretKey: CF_API_KEY
-    pageUrl: "https://www.curseforge.com/minecraft/modpacks/into-the-backrooms-found-footage-horror"
+    pageUrl: "https://www.curseforge.com/minecraft/modpacks/ftb-stoneblock-4"
   # ─── Modrinth Modpack (when type: MODRINTH) ──────────────────────────────
   # Add to extraEnv:
   #   MODRINTH_PROJECT: "<project-id-or-slug>"
@@ -43,7 +43,7 @@ minecraftServer:
   jvmXXOpts: "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1"
 
   # ─── Server Properties ────────────────────────────────────────────────────
-  motd: "My Homelab Minecraft Server"  # message shown in server list
+  motd: "Stonecraft 4 "  # message shown in server list
   difficulty: normal                   # peaceful | easy | normal | hard
   gameMode: survival                   # survival | creative | adventure | spectator
   maxPlayers: 10
@@ -93,7 +93,7 @@ minecraftServer:
 persistence:
   dataDir:
     enabled: true
-    Size: 20Gi                         # world + mods + configs; increase for large modpacks
+    Size: 40Gi                         # world + mods + configs; increase for large modpacks
     # storageClass: local-path         # k3s default; omit to use cluster default
 
 # ─── Resource Requests & Limits ───────────────────────────────────────────────
