@@ -1,4 +1,4 @@
-replicaCount: 0                      # set to 0 to turn the server off or 1 to turn it on;
+replicaCount: 1                      # set to 0 to turn the server off or 1 to turn it on;
 
 # ─── Server Image ─────────────────────────────────────────────────────────────
 image:
@@ -64,7 +64,7 @@ minecraftServer:
 
   # ─── Access Control ───────────────────────────────────────────────────────
   ops: "Chizuria"                              # comma-separated Minecraft usernames (server admins)
-  whitelist: "Chizuria"                        # comma-separated usernames; empty = open to anyone on tailnet
+  whitelist: ""                        # comma-separated usernames; empty = open to anyone on tailnet
 
   # ─── Networking ──────────────────────────────────────────────────────────
   # NodePort exposes the server on the node's IP (including the Tailscale IP).
