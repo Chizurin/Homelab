@@ -128,6 +128,75 @@ kubectl delete pv <pv-name>
 argocd app sync minecraft
 ```
 
+## Backups
+```
+[05:21:46] [ForkJoinPool.commonPool-worker-5/INFO] [de.ft.mo.ft.Backups/]: Created archive /data/ftbbackups3/2026-03-03-05-21-43.zip from /data/./world/. in 3297 ms (55.2MB)!
+```
+### Grabbing Backups
+If you want to grab the latest backup (done automatically in the container at certain intervals) and download it locally (in case of emergencies)
+
+```bash
+kubectl cp minecraft/{ POD_NAME }:/data/ftbbackups3/{ NAME OF BACKUP }.zip ./{ NAME OF BACKUP }.zip
+```
+
+### Restoring using Backups
+If you want to restore the world using the backup. (assuming backup is in current directory)
+
+Turn the server off first and create a temporary pod for the PVC (local-path)
+```bash
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: temp-backup
+  namespace: minecraft
+spec:
+  containers:
+  - name: temp
+    image: busybox
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - name: data
+      mountPath: /data
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: minecraft-minecraft-datadir
+EOF
+```
+
+
+```bash
+# Copy the backup to the temp-pod
+kubectl cp ./{ NAME OF BACKUP }.zip minecraft/temp-backup:/data/
+
+# Exec into the pod
+kubectl exec -it temp-backup -n minecraft -- /bin/sh
+cd /data
+
+# Backup the current world data
+mv /data/world /data/world-old
+
+# Check the backup (should extract world directory; world/)
+unzip -l /data/{ NAME OF BACKUP }.zip
+
+unzip { NAME OF BACKUP }.zip 
+
+# Check the world
+ls /data/world
+
+# Exit and clean up the temp pod
+exit
+kubectl delete pod temp-backup -n minecraft
+
+# Start the server and check if it boots with the following commands
+
+# Get the pod name
+kubectl get pods -n minecraft
+
+# Check logs
+kubectl logs -f -n minecraft <pod-name>
+```
 ## Common Commands
 
 | Task | Command |
