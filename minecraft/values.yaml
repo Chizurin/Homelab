@@ -47,8 +47,8 @@ minecraftServer:
   difficulty: normal                   # peaceful | easy | normal | hard
   gameMode: survival                   # survival | creative | adventure | spectator
   maxPlayers: 10
-  viewDistance: 10                     # render distance in chunks (lower = better perf)
-  simulationDistance: 8                # entity tick distance (lower = better perf)
+  viewDistance: 6                     # render distance in chunks (lower = better perf)
+  simulationDistance: 4                # entity tick distance (lower = better perf)
 
   pvp: true
   spawnMonsters: true
