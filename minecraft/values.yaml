@@ -1,4 +1,4 @@
-replicaCount: 0                      # set to 0 to turn the server off or 1 to turn it on;
+replicaCount: 1                      # set to 0 to turn the server off or 1 to turn it on;
 
 # ─── Server Image ─────────────────────────────────────────────────────────────
 image:
@@ -11,7 +11,7 @@ minecraftServer:
   eula: "TRUE"                         # required: accepts Mojang's EULA
 
   # Minecraft version. Use "LATEST" or pin e.g. "1.20.1"
-  version: "1.12.2"
+  version: "1.12.1"
 
   # Server type. Common options:
   #   AUTO_CURSEFORGE  — CurseForge modpack (needs CF_API_KEY)
