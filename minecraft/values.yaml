@@ -3,7 +3,7 @@ replicaCount: 1                      # set to 0 to turn the server off or 1 to t
 # ─── Server Image ─────────────────────────────────────────────────────────────
 image:
   repository: itzg/minecraft-server
-  tag: latest                          # or "java21", "java17" to pin a specific JDK
+  tag: java8-multiarch                          # or "java21", "java17" to pin a specific JDK
   pullPolicy: IfNotPresent
 
 # ─── Server Core ──────────────────────────────────────────────────────────────
@@ -11,7 +11,7 @@ minecraftServer:
   eula: "TRUE"                         # required: accepts Mojang's EULA
 
   # Minecraft version. Use "LATEST" or pin e.g. "1.20.1"
-  version: "1.12.1"
+  version: "1.12.2"
 
   # Server type. Common options:
   #   AUTO_CURSEFORGE  — CurseForge modpack (needs CF_API_KEY)
@@ -37,7 +37,7 @@ minecraftServer:
   # fabricVersion: "0.15.11"           # optional: pin Fabric Loader version
 
   # ─── Memory & JVM ─────────────────────────────────────────────────────────
-  memory: "8192M"                      # heap size (~75% of available RAM is a safe target)
+  memory: "6144M"                      # heap size (~75% of available RAM is a safe target)
 
   # Aikar's optimized GC flags — recommended for modded servers:
   jvmXXOpts: "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1"
@@ -99,11 +99,11 @@ persistence:
 # ─── Resource Requests & Limits ───────────────────────────────────────────────
 resources:
   requests:
-    memory: 2Gi
-    cpu: "1"
+    memory: "8Gi"
+    cpu: "2"        # 1 for tick loop + 1 for chunk gen / GC / IO
   limits:
-    memory: 10Gi                       # must be > memory setting + OS headroom
-    cpu: "4"
+    memory: "8Gi"
+    cpu: "2"        # No point going higher for vanilla/Forge
 
 # ─── Startup / Probe Timings ──────────────────────────────────────────────────
 # Large modpacks can take 5-15 min to download and start.
