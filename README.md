@@ -48,8 +48,8 @@ source ~/.bashrc
 
 ```sh
 kubectl apply -f bootstrap/argocd/namespace.yaml
-kubectl apply --server-side -f bootstrap/argocd/install.yaml
-kubectl -n argocd rollout status deployment argocd-server
+kubectl apply --server-side -f bootstrap/argocd/install.yaml -n argocd
+kubectl -n argocd rollout status deployment argocd-server --timeout=300s
 ```
 
 ### 3. Connect the cluster to git
