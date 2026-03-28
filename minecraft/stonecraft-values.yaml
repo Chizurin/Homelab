@@ -11,7 +11,7 @@ minecraftServer:
   eula: "TRUE"                         # required: accepts Mojang's EULA
 
   # Minecraft version. Use "LATEST" or pin e.g. "1.20.1"
-  version: "1.12.2"
+  version: "1.21.1"
 
   # Server type. Common options:
   #   AUTO_CURSEFORGE  — CurseForge modpack (needs CF_API_KEY)
@@ -26,7 +26,7 @@ minecraftServer:
     apiKey:
       existingSecret: minecraft-secret    # pulls CF_API_KEY from the SealedSecret
       secretKey: CF_API_KEY
-    pageUrl: "https://www.curseforge.com/minecraft/modpacks/rlcraft"
+    pageUrl: "https://www.curseforge.com/minecraft/modpacks/ftb-stoneblock-4"
   # ─── Modrinth Modpack (when type: MODRINTH) ──────────────────────────────
   # Add to extraEnv:
   #   MODRINTH_PROJECT: "<project-id-or-slug>"
