@@ -56,7 +56,7 @@ minecraftServer:
   spawnNpcs: true                      # villagers
 
   allowNether: true
-  enableCommandBlock: false
+  enableCommandBlock: true
   announcePlayerAchievements: true
 
   levelSeed: ""                        # "" = random; e.g. "12345" to pin a seed
